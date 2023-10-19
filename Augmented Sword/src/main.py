@@ -2,6 +2,7 @@ import cv2 as cv
 import sys
 
 from marker_detection import MarkerDetector
+from marker_identification import MarkerIdentifier
 
 def capture_video():
     camera = cv.VideoCapture(0)
@@ -27,9 +28,10 @@ def capture_video():
 def detect_markers():
     image = cv.imread('../data/images/markers.jpg')
 
-    for marker in MarkerDetector.detect_markers(image):
-        cv.imshow('marker', marker)
-        cv.waitKey(0)
+    for marker in MarkerDetector.detect(image):
+        marker_id = MarkerIdentifier.identify(marker)
+
+        print(marker_id)
 
 if __name__ == "__main__":
     detect_markers()
