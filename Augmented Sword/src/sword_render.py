@@ -15,6 +15,8 @@ class SwordRenderer:
         camera_matrix = files["camera_matrix"]
         distortion_coefficient = files["distortion_coefficients"]
 
+        image_points = corners.astype(np.double)
+
         model_points = np.array(
             [
                 [0, 0, 0],
@@ -25,51 +27,27 @@ class SwordRenderer:
             dtype="double",
         )
 
-        image_points = corners.astype(np.double)
-
         # Rotation and translation vectors
         _, rvec, tvec = cv.solvePnP(
-            model_points, image_points, camera_matrix, distortion_coefficient
+            model_points, image_points, camera_matrix, distortion_coefficient, flags=0
         )
 
-        ar_verts = np.array(
-            [
-                [0, 0, 0],
-                [0, 1, 0],
-                [1, 1, 0],
-                [1, 0, 0],
-                [0, 0, 1],
-                [0, 1, 1],
-                [1, 1, 1],
-                [1, 0, 1],
-            ]
+        verts, _ = cv.projectPoints(
+            np.array([(0.0, 0.0, 1000.0)]),
+            rvec,
+            tvec,
+            camera_matrix,
+            distortion_coefficient,
         )
 
-        ar_edges = [
-            (0, 1),
-            (1, 2),
-            (2, 3),
-            (3, 0),
-            (4, 5),
-            (5, 6),
-            (6, 7),
-            (7, 4),
-            (0, 4),
-            (1, 5),
-            (2, 6),
-            (3, 7),
-        ]
+        # Draw corners
+        for p in image_points:
+            cv.circle(image, (int(p[0]), int(p[1])), 5, (0, 0, 255), -1)
 
-        scale = 1
-        ar_verts = np.array(list(map(translateXY, ar_verts)), dtype=np.float32)
-        ar_verts *= scale
+        for image_point in image_points:
+            point1 = image_point.astype(np.int32)
+            point2 = (int(verts[0][0][0]), int(verts[0][0][1]))
 
-        verts = cv.projectPoints(
-            ar_verts, rvec, tvec, camera_matrix, distortion_coefficient
-        )[0].reshape(-1, 2)
-
-        for i, j in ar_edges:
-            (x0, y0), (x1, y1) = verts[i], verts[j]
-            cv.line(image, (int(x0), int(y0)), (int(x1), int(y1)), (0, 0, 255), 10)
+            cv.line(image, point1, point2, (0, 0, 255), 2)
 
         return image
