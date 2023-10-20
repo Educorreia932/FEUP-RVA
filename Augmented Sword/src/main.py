@@ -1,8 +1,10 @@
 import cv2 as cv
 import sys
+import numpy as np
 
 from marker_detection import MarkerDetector
 from marker_identification import MarkerIdentifier
+from sword_render import SwordRenderer
 
 def capture_video():
     camera = cv.VideoCapture(0)
@@ -14,7 +16,15 @@ def capture_video():
         if not check:
             print("Can't receive frame. Exiting ...", file=sys.stderr)
 
-        cv.imshow('video', frame)
+        corners = list(MarkerDetector.detect(frame))
+
+        if corners:
+            for contours in corners:
+                pass
+                # cv.drawContours(frame, contours, -1, (0, 255, 0), 20)
+                # frame = overlay_marker(frame, marker_corners)
+
+        cv.imshow('Video', frame)
 
         key = cv.waitKey(1)
         
@@ -25,13 +35,18 @@ def capture_video():
     camera.release()
     cv.destroyAllWindows()
 
-def detect_markers():
-    image = cv.imread('../data/images/markers.jpg')
+def draw_sword():
+    image = cv.imread('../data/images/camera.png')
 
-    for marker in MarkerDetector.detect(image):
-        marker_id = MarkerIdentifier.identify(marker)
+    contours = MarkerDetector.detect(image)
 
-        print(marker_id)
+    cv.drawContours(image, contours, -1, (0, 255, 0), 10)
+
+    # Draw a sword wireframe on top of detected AruCo marker
+    image = SwordRenderer.draw(image, contours[0])
+
+    cv.imshow("Augmented Sword", image)
+    cv.waitKey(0)
 
 if __name__ == "__main__":
-    detect_markers()
+    draw_sword()
