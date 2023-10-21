@@ -10,8 +10,10 @@ from sword_render import SwordRenderer
 def capture_video():
     camera = cv.VideoCapture(0)
     detector = MarkerDetector()
+
+    # TODO: Move this to configuration file or arguments parameters
     identifier = MarkerIdentifier(
-        cv.aruco.getPredefinedDictionary(cv.aruco.DICT_4X4_250)
+        cv.aruco.getPredefinedDictionary(cv.aruco.DICT_4X4_250), 94, 99
     )
 
     while True:
@@ -21,17 +23,17 @@ def capture_video():
         if not check:
             print("Can't receive frame. Exiting ...", file=sys.stderr)
 
+        # Detect marker corners
         corners = detector.detect(frame)
 
         if corners is not None:
-            print("Marker detected")
-
-            marker_id = identifier.identify(detector._threshold(frame), corners)
+            rotated_marker, marker_id = identifier.identify(detector._threshold(frame), corners)
 
             if marker_id != -1:
-                print(f"Marker n. {marker_id}")
+                # Draw detected marker
+                corners = (np.array([rotated_marker.astype(np.float32)]),)
 
-                cv.drawContours(frame, [corners], -1, (0, 255, 0), 10)
+                cv.aruco.drawDetectedMarkers(frame, corners, np.array([marker_id]))
 
         cv.imshow("Video", frame)
 

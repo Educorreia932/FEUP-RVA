@@ -3,28 +3,15 @@ import numpy as np
 
 
 class MarkerIdentifier:
-    def __init__(self, markers_dict):
+    SIDE_PIXELS = 250
+
+    def __init__(self, markers_dict, min_id, max_id):
         self.markers_dict = markers_dict
+        self.id_range = range(min_id, max_id + 1)
 
     def identify(self, image, corners):
-        def squares_matrix(marker, side_pixels):
-            marker_size = marker.shape[0]  # Number of squares in one dimension
-            square_pixels = side_pixels // marker_size  # Number of pixels in one square
-
-            grid = np.zeros((marker_size, marker_size))
-
-            for y in range(0, side_pixels, square_pixels):
-                for x in range(0, side_pixels, square_pixels):
-                    square = marker[y : y + square_pixels, x : x + square_pixels]
-                    num_white_pixels = np.count_nonzero(square == 0)
-
-                    if num_white_pixels > square_pixels**2 / 2:
-                        grid[y // square_pixels, x // square_pixels] = 1
-
-            return grid
-
         def get_marker_from_dict(marker_id):
-            return cv.aruco.generateImageMarker(self.markers_dict, marker_id, 250)
+            return cv.aruco.generateImageMarker(self.markers_dict, marker_id, self.SIDE_PIXELS)
 
         def get_marker_from_image(image, corners, marker_size):
             # Define the dimensions of the target image
@@ -51,28 +38,31 @@ class MarkerIdentifier:
 
             return marker
 
-        marker_size = self.markers_dict.markerSize
-        source_marker = get_marker_from_image(image, corners, 250)
+        source_marker = get_marker_from_image(image, corners, self.SIDE_PIXELS)
 
         # Get four orientations of the target marker
         rotated_markers = [
-            cv.rotate(source_marker, cv.ROTATE_90_CLOCKWISE),
-            cv.rotate(source_marker, cv.ROTATE_180),
-            cv.rotate(source_marker, cv.ROTATE_90_COUNTERCLOCKWISE),
             source_marker,
+            cv.rotate(source_marker, cv.ROTATE_90_COUNTERCLOCKWISE),
+            cv.rotate(source_marker, cv.ROTATE_180),
+            cv.rotate(source_marker, cv.ROTATE_90_CLOCKWISE),
         ]
 
-        for id in range(94, 100):
+        for id in self.id_range:
             target_marker = get_marker_from_dict(id)
 
-            for rotated_marker in rotated_markers:
+            for i, rotated_marker in enumerate(rotated_markers):
                 # Subtract the two markers
                 subtracted = np.subtract(target_marker, rotated_marker)
 
                 # Count number of white pixels
                 num_white_pixels = np.count_nonzero(subtracted == 255)
 
-                if num_white_pixels < 1500:
-                    return id
+                # Rotate corners according to the marker orientation
+                rotated_corners = np.roll(corners, i, axis=0)
 
-        return -1
+                # If the number of white pixels is less than 1500, then we have a match
+                if num_white_pixels < 1500:
+                    return rotated_corners, id
+
+        return None, -1
