@@ -69,13 +69,13 @@ def debug():
             cv.aruco.drawDetectedMarkers(image, corners, np.array([marker_id]))
 
             # Draw sword
-            image = draw_sword(image, marker_id, marker_corners)
+            image = render_sword(image, marker_id, marker_corners)
 
     cv.imshow("Augmented Sword", image)
     cv.waitKey(0)
     cv.destroyAllWindows()
 
-def draw_sword(image, marker_id, marker_corners):
+def render_sword(image, marker_id, marker_corners):
     # Draw a sword wireframe on top of detected AruCo marker
     renderer = SwordRenderer()
     image = renderer.draw(image, marker_corners, marker_id)
