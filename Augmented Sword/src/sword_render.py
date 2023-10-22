@@ -4,50 +4,82 @@ import cv2 as cv
 
 class SwordRenderer:
     @classmethod
-    def draw(cls, image, corners):
-        def translateXY(x):
-            x[0] -= 0.5
-            x[1] -= 0.5
-
-            return x
-
+    def draw(cls, image, marker_corners, marker_id):
         files = np.load("camera.npz")
         camera_matrix = files["camera_matrix"]
         distortion_coefficient = files["distortion_coefficients"]
 
-        image_points = corners.astype(np.double)
+        scale = 250
 
-        model_points = np.array(
-            [
-                [0, 0, 0],
-                [0, 250, 0],
-                [250, 250, 0],
-                [250, 0, 0],
-            ],
-            dtype="double",
+        image_points = marker_corners.astype(np.double)
+        model_points = (
+            np.array(
+                [
+                    [-0.5, 0.5, 0],
+                    [-0.5, -0.5, 0],
+                    [0.5, -0.5, 0],
+                    [0.5, 0.5, 0],
+                ],
+                dtype="double",
+            )
+            * scale
         )
 
         # Rotation and translation vectors
         _, rvec, tvec = cv.solvePnP(
-            model_points, image_points, camera_matrix, distortion_coefficient, flags=0
+            model_points, image_points, camera_matrix, distortion_coefficient
         )
 
+        # Project 3D points to image plane
+        ar_verts = (
+            np.array(
+                [
+                    [-0.5, 0.5, 0.0],
+                    [-0.5, -0.5, 0.0],
+                    [0.5, -0.5, 0.0],
+                    [0.5, 0.5, 0.0],
+                    [-0.5, 0.5, 1.0],
+                    [-0.5, -0.5, 1.0],
+                    [0.5, -0.5, 1.0],
+                    [0.5, 0.5, 1.0],
+                ],
+                dtype=np.float32,
+            )
+            * scale
+        )
+
+        ar_edges = [
+            [0, 1],
+            [1, 2],
+            [2, 3],
+            [3, 0],
+            [4, 5],
+            [5, 6],
+            [6, 7],
+            [0, 4],
+            [1, 5],
+            [2, 6],
+            [3, 7],
+        ]
+
         verts, _ = cv.projectPoints(
-            np.array([(0.0, 0.0, 1000.0)]),
+            ar_verts,
             rvec,
             tvec,
             camera_matrix,
             distortion_coefficient,
         )
 
-        # Draw corners
-        for p in image_points:
-            cv.circle(image, (int(p[0]), int(p[1])), 5, (0, 0, 255), -1)
+        for ar_edge in ar_edges:
+            start_point = verts[ar_edge[0]][0].astype(np.int32)
+            end_point = verts[ar_edge[1]][0].astype(np.int32)
 
-        for image_point in image_points:
-            point1 = image_point.astype(np.int32)
-            point2 = (int(verts[0][0][0]), int(verts[0][0][1]))
-
-            cv.line(image, point1, point2, (0, 0, 255), 2)
+            image = cv.line(
+                image,
+                start_point,
+                end_point,
+                (0, 255, 0),
+                2,
+            )
 
         return image

@@ -24,20 +24,23 @@ def capture_video():
             print("Can't receive frame. Exiting ...", file=sys.stderr)
 
         # Detect marker corners
-        corners = detector.detect(frame)
+        detected_corners = detector.detect(frame)
 
-        if corners is not None:
-            rotated_marker, marker_id = identifier.identify(detector._threshold(frame), corners)
+        if detected_corners is not None:
+            marker_corners, marker_id = identifier.identify(detector._threshold(frame), detected_corners)
 
-            if marker_id != -1:
+            if marker_corners is not None:
                 # Draw detected marker
-                corners = (np.array([rotated_marker.astype(np.float32)]),)
+                corners = (np.array([marker_corners.astype(np.float32)]),)
 
                 cv.aruco.drawDetectedMarkers(frame, corners, np.array([marker_id]))
 
+                # Draw sword
+                frame = draw_sword(frame, marker_id, marker_corners)
+
         cv.imshow("Video", frame)
 
-        key = cv.waitKey(1)
+        key = cv.waitKey(10)
 
         # Press ESC to exit
         if key == 27:
