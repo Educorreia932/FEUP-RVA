@@ -68,16 +68,14 @@ class SwordRenderer:
         )
 
         # Rotation and translation vectors
-        for points in model_points:
-            _, rvec, tvec = cv.solvePnP(
-                points,
-                image_points,
-                self.camera_matrix,
-                self.distortion_coefficient,
-            )
+        _, rvec, tvec = cv.solvePnP(
+            model_points[5],
+            image_points,
+            self.camera_matrix,
+            self.distortion_coefficient,
+        )
 
-            self.draw_sword(image, rvec, tvec)
-            # self.draw_referential(image, rvec, tvec)
+        self.draw_sword(image, rvec, tvec)
 
         return image
 
@@ -106,38 +104,15 @@ class SwordRenderer:
         )
 
     def draw_sword(self, image, rvec, tvec):
-        ar_verts = (
-            np.array(
-                [
-                    # Base
-                    [-0.5, -0.5, -0.5],
-                    [-0.5, 0.5, -0.5],
-                    [0.5, 0.5, -0.5],
-                    [0.5, -0.5, -0.5],
-                    # Tip
-                    [0.0, 0.0, -1.5],
-                ],
-                dtype=np.float32,
-            )
-            * self.scale
-        )
+        self.load_object("../data/models/sword")
 
-        ar_edges = [
-            # Base
-            [0, 1],
-            [1, 2],
-            [2, 3],
-            [3, 0],
-            # Tip
-            [0, 4],
-            [1, 4],
-            [2, 4],
-            [3, 4],
-        ]
+        ar_verts, ar_faces = self.load_object("../data/models/sword")
 
-        return self.draw_wireframe(image, rvec, tvec, ar_verts, ar_edges)
+        ar_verts *= self.scale
 
-    def draw_wireframe(self, image, rvec, tvec, ar_verts, ar_edges, colors=None):
+        return self.draw_wireframe(image, rvec, tvec, ar_verts, ar_faces)
+
+    def draw_wireframe(self, image, rvec, tvec, ar_verts, ar_faces):
         # Project 3D points to image plane
         verts, _ = cv.projectPoints(
             ar_verts,
@@ -147,16 +122,19 @@ class SwordRenderer:
             self.distortion_coefficient,
         )
 
-        for i, ar_edge in enumerate(ar_edges):
-            start_point = verts[ar_edge[0]][0].astype(np.int32)
-            end_point = verts[ar_edge[1]][0].astype(np.int32)
+        for face in ar_faces:
+            points = verts[face.astype(np.int32)].astype(np.int32)
 
-            image = cv.line(
-                image,
-                start_point,
-                end_point,
-                colors[i] if colors else (0, 0, 255),
-                2,
-            )
+            cv.drawContours(image, [points], -1, (0, 0, 255), 2)
 
         return image
+
+    def load_object(self, path):
+
+        with open(f"{path}/vertices.txt", "r") as file:
+            vertices = np.array([np.array([float(x) for x in line.split()]) for line in file.readlines()])
+
+        with open(f"{path}/faces.txt", "r") as file:
+            faces = np.array([np.array([int(x) - 1 for x in line.split()]) for line in file.readlines()])
+        
+        return vertices, faces
