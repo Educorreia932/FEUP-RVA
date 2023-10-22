@@ -3,74 +3,67 @@ import cv2 as cv
 
 
 class SwordRenderer:
-    @classmethod
-    def draw(cls, image, marker_corners, marker_id):
-        files = np.load("camera.npz")
-        camera_matrix = files["camera_matrix"]
-        distortion_coefficient = files["distortion_coefficients"]
+    scale = 250
+    files = np.load("camera.npz")
+    camera_matrix = files["camera_matrix"]
+    distortion_coefficient = files["distortion_coefficients"]
 
-        scale = 250
+    def draw(self, image, marker_corners, marker_id):
+        # Roll marker corners (DEBUG)
+        marker_corners = np.roll(marker_corners, -1, axis=0)
 
         image_points = marker_corners.astype(np.double)
+
+        # Faces of the cube
         model_points = (
             np.array(
                 [
-                    [-0.5, 0.5, 0],
-                    [-0.5, -0.5, 0],
-                    [0.5, -0.5, 0],
-                    [0.5, 0.5, 0],
+                    # Front face
+                    [
+                        [-0.325, -0.325, -0.5],
+                        [-0.325, 0.325, -0.5],
+                        [0.325, 0.325, -0.5],
+                        [0.325, -0.325, -0.5],
+                    ],
                 ],
-                dtype="double",
+                dtype=np.float32,
             )
-            * scale
+            * self.scale
         )
 
         # Rotation and translation vectors
         _, rvec, tvec = cv.solvePnP(
-            model_points, image_points, camera_matrix, distortion_coefficient
+            model_points[0], image_points, self.camera_matrix, self.distortion_coefficient
         )
 
-        # Project 3D points to image plane
+        self.draw_referential(image, rvec, tvec)
+
+        return image
+
+    def draw_referential(self, image, rvec, tvec):
+        ar_edges = [[0, 1], [0, 2], [0, 3]]
+
         ar_verts = (
             np.array(
-                [
-                    [-0.5, 0.5, 0.0],
-                    [-0.5, -0.5, 0.0],
-                    [0.5, -0.5, 0.0],
-                    [0.5, 0.5, 0.0],
-                    [-0.5, 0.5, 1.0],
-                    [-0.5, -0.5, 1.0],
-                    [0.5, -0.5, 1.0],
-                    [0.5, 0.5, 1.0],
-                ],
+                [[0, 0, 0], [0.5, 0, 0], [0, 0.5, 0], [0, 0, 0.5]],
                 dtype=np.float32,
             )
-            * scale
+            * self.scale
         )
 
-        ar_edges = [
-            [0, 1],
-            [1, 2],
-            [2, 3],
-            [3, 0],
-            [4, 5],
-            [5, 6],
-            [6, 7],
-            [0, 4],
-            [1, 5],
-            [2, 6],
-            [3, 7],
-        ]
+        return self.draw_wireframe(image, rvec, tvec, ar_verts, ar_edges)
 
+    def draw_wireframe(self, image, rvec, tvec, ar_verts, ar_edges):
+        # Project 3D points to image plane
         verts, _ = cv.projectPoints(
             ar_verts,
             rvec,
             tvec,
-            camera_matrix,
-            distortion_coefficient,
+            self.camera_matrix,
+            self.distortion_coefficient,
         )
 
-        for ar_edge in ar_edges:
+        for i, ar_edge in enumerate(ar_edges):
             start_point = verts[ar_edge[0]][0].astype(np.int32)
             end_point = verts[ar_edge[1]][0].astype(np.int32)
 
@@ -78,7 +71,7 @@ class SwordRenderer:
                 image,
                 start_point,
                 end_point,
-                (0, 255, 0),
+                (255, 255, 255) * abs(ar_verts[i + 1]),
                 2,
             )
 

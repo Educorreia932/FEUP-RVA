@@ -49,23 +49,38 @@ def capture_video():
     camera.release()
     cv.destroyAllWindows()
 
+def debug():
+    image = cv.imread("../data/images/photo.jpg")
+    detector = MarkerDetector()
+    identifier = MarkerIdentifier(
+        cv.aruco.getPredefinedDictionary(cv.aruco.DICT_4X4_250), 94, 99
+    )
 
-def draw_sword(image):
-    marker_detector = MarkerDetector()
-    contours = marker_detector.detect(image)
+    # Detect marker corners
+    detected_corners = detector.detect(image)
 
-    if len(contours) == 0:
-        return image
+    if detected_corners is not None:
+        marker_corners, marker_id = identifier.identify(detector._threshold(image), detected_corners)
 
-    cv.drawContours(image, contours, -1, (0, 255, 0), 10)
+        if marker_corners is not None:
+            # Draw detected marker
+            corners = (np.array([marker_corners.astype(np.float32)]),)
 
+            cv.aruco.drawDetectedMarkers(image, corners, np.array([marker_id]))
+
+            # Draw sword
+            image = draw_sword(image, marker_id, marker_corners)
+
+    cv.imshow("Augmented Sword", image)
+    cv.waitKey(0)
+    cv.destroyAllWindows()
+
+def draw_sword(image, marker_id, marker_corners):
     # Draw a sword wireframe on top of detected AruCo marker
-    image = SwordRenderer.draw(image, contours[0])
+    renderer = SwordRenderer()
+    image = renderer.draw(image, marker_corners, marker_id)
 
     return image
 
-
 if __name__ == "__main__":
-    # image = cv.imread('../data/images/camera.png')
-
-    capture_video()
+    debug()
