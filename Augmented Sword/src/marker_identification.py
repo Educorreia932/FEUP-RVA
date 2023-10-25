@@ -52,14 +52,14 @@ class MarkerIdentifier:
             target_marker = get_marker_from_dict(id)
 
             for i, rotated_marker in enumerate(rotated_markers):
-                # Subtract the two markers
-                subtracted = np.subtract(target_marker, rotated_marker)
+                # Get the difference between the two markers
+                difference = np.subtract(target_marker, rotated_marker)
 
                 # Count number of white pixels
-                num_white_pixels = np.count_nonzero(subtracted == 255)
+                num_white_pixels = np.count_nonzero(difference == 255)
 
                 # Rotate corners according to the marker orientation
-                rotated_corners = np.roll(corners, i, axis=0)
+                rotated_corners = np.roll(corners, i + 1, axis=0)
 
                 # If the number of white pixels is less than 1500, then we have a match
                 if num_white_pixels < 1500:

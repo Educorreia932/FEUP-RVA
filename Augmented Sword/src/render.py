@@ -9,16 +9,33 @@ class SwordRenderer:
     distortion_coefficient = files["distortion_coefficients"]
 
     def draw(self, image, marker_corners, marker_id):
-        # Roll marker corners (DEBUG)
-        marker_corners = np.roll(marker_corners, -1, axis=0)
-
         image_points = marker_corners.astype(np.double)
 
         # Faces of the cube
         model_points = (
             np.array(
-                # TODO: Can be calculated using rotation matrixes
                 [
+                    # Back face
+                    [
+                        [0.325, -0.325, 0.5],
+                        [0.325, 0.325, 0.5],
+                        [-0.325, 0.325, 0.5],
+                        [-0.325, -0.325, 0.5],
+                    ],
+                    # Bottom face
+                    [
+                        [-0.325, -0.5, 0.325],
+                        [-0.325, -0.5, -0.325],
+                        [0.325, -0.5, -0.325],
+                        [0.325, -0.5, 0.325],
+                    ],
+                    # Left face
+                    [
+                        [0.5, 0.325, 0.325],
+                        [0.5, -0.325, 0.325],
+                        [0.5, -0.325, -0.325],
+                        [0.5, 0.325, -0.325],
+                    ],
                     # Front face
                     [
                         [-0.325, -0.325, -0.5],
@@ -27,20 +44,6 @@ class SwordRenderer:
                         [0.325, -0.325, -0.5],
                     ],
                     # Right face
-                    [
-                        [-0.5, -0.325, 0.325],
-                        [-0.5, 0.325, 0.325],
-                        [-0.5, 0.325, -0.325],
-                        [-0.5, -0.325, -0.325],
-                    ],
-                    # Back face
-                    [
-                        [0.325, -0.325, 0.5],
-                        [0.325, 0.325, 0.5],
-                        [-0.325, 0.325, 0.5],
-                        [-0.325, -0.325, 0.5],
-                    ],
-                    # Left face
                     [
                         [0.5, -0.325, -0.325],
                         [0.5, 0.325, -0.325],
@@ -54,13 +57,6 @@ class SwordRenderer:
                         [0.325, 0.5, 0.325],
                         [0.325, 0.5, -0.325],
                     ],
-                    # Bottom face
-                    [
-                        [-0.325, -0.5, 0.325],
-                        [-0.325, -0.5, -0.325],
-                        [0.325, -0.5, -0.325],
-                        [0.325, -0.5, 0.325],
-                    ],
                 ],
                 dtype=np.float32,
             )
@@ -69,7 +65,7 @@ class SwordRenderer:
 
         # Rotation and translation vectors
         _, rvec, tvec = cv.solvePnP(
-            model_points[5],
+            model_points[marker_id - 88],
             image_points,
             self.camera_matrix,
             self.distortion_coefficient,
@@ -108,7 +104,7 @@ class SwordRenderer:
 
         ar_verts, ar_faces = self.load_object("../data/models/sword")
 
-        ar_verts *= self.scale
+        ar_verts *= self.scale * 2
 
         return self.draw_wireframe(image, rvec, tvec, ar_verts, ar_faces)
 
@@ -119,7 +115,7 @@ class SwordRenderer:
             rvec,
             tvec,
             self.camera_matrix,
-            self.distortion_coefficient,
+            None,
         )
 
         for face in ar_faces:
@@ -130,7 +126,6 @@ class SwordRenderer:
         return image
 
     def load_object(self, path):
-
         with open(f"{path}/vertices.txt", "r") as file:
             vertices = np.array([np.array([float(x) for x in line.split()]) for line in file.readlines()])
 

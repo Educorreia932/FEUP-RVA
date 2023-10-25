@@ -4,7 +4,7 @@ import numpy as np
 
 from marker_detection import MarkerDetector
 from marker_identification import MarkerIdentifier
-from sword_render import SwordRenderer
+from render import SwordRenderer
 
 
 def capture_video():
@@ -13,7 +13,7 @@ def capture_video():
 
     # TODO: Move this to configuration file or arguments parameters
     identifier = MarkerIdentifier(
-        cv.aruco.getPredefinedDictionary(cv.aruco.DICT_4X4_250), 94, 99
+        cv.aruco.getPredefinedDictionary(cv.aruco.DICT_4X4_250), 88, 93
     )
 
     while True:
@@ -27,6 +27,8 @@ def capture_video():
         detected_corners = detector.detect(frame)
 
         if detected_corners is not None:
+            cv.drawContours(frame, [detected_corners], -1, (0, 255, 0), 3)
+
             marker_corners, marker_id = identifier.identify(detector._threshold(frame), detected_corners)
 
             if marker_corners is not None:
@@ -36,7 +38,8 @@ def capture_video():
                 cv.aruco.drawDetectedMarkers(frame, corners, np.array([marker_id]))
 
                 # Draw sword
-                frame = draw_sword(frame, marker_id, marker_corners)
+                renderer = SwordRenderer()
+                frame = renderer.draw(frame, marker_corners, marker_id)
 
         cv.imshow("Video", frame)
 
@@ -83,4 +86,4 @@ def render_sword(image, marker_id, marker_corners):
     return image
 
 if __name__ == "__main__":
-    debug()
+    capture_video()
