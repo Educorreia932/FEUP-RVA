@@ -1,16 +1,26 @@
+using System;
+using TMPro;
 using UnityEngine;
 
-public class PlayerController : MonoBehaviour {
+public class PlayerController : MonoBehaviour
+{
 	private float speed = 5;
 	private CharacterController controller;
+	private int points;
+	private TMP_Text pointsText;
 
 	// Start is called before the first frame update
-	void Start() {
+	void Start()
+	{
 		controller = GetComponent<CharacterController>();
+		pointsText = GameObject.FindGameObjectWithTag("UIPoints").GetComponent<TMP_Text>();
+		points = 0;
+		UpdatePointsText();
 	}
 
 	// Update is called once per frame
-	void Update() {
+	void Update()
+	{
 		// Get input
 		Vector3 input = new(
 			Input.GetAxisRaw("Horizontal"),
@@ -24,5 +34,16 @@ public class PlayerController : MonoBehaviour {
 
 		// Move player
 		controller.Move(velocity * Time.deltaTime);
+	}
+
+	public void AddPoints(int amount)
+	{
+		points += amount;
+		UpdatePointsText();
+	}
+
+	private void UpdatePointsText()
+	{
+		pointsText.text = "Points: " + points;
 	}
 }
