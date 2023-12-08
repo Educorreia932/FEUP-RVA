@@ -15,7 +15,7 @@ public class UIManager : MonoBehaviour
         tabSystem.TabButtonAmount = 4;
         currentTabIndex = -1;
         tabSystem.SetSelectedButtonIndex(0);
-        tabSystem.OnTabButtonsClicked.AddListener(EventExample);
+        tabSystem.OnTabButtonsClicked.AddListener(TabButtonClick);
         tabs = GetTabs();
         DisableTabs();
     }
@@ -84,9 +84,7 @@ public class UIManager : MonoBehaviour
         tabObj.SetActive(!tabObj.activeSelf);
     }
 
-    // ...
-    // Register this event from inspector if you want, using the unity event.
-    public void EventExample(int selectedTabIndex)
+    public void TabButtonClick(int selectedTabIndex)
     {
         // untoggle current tab
         if (selectedTabIndex == currentTabIndex)
