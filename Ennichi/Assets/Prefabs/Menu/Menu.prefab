@@ -1057,6 +1057,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9148915927361346445}
+  - component: {fileID: 1791320903729545989}
   m_Layer: 0
   m_Name: Menu
   m_TagString: Untagged
@@ -1081,6 +1082,19 @@ Transform:
   - {fileID: 1092859297727096486}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1791320903729545989
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5437280816667379073}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9783d51d523be62c592d83ea0b0ea8f0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tabSystem: {fileID: 0}
 --- !u!1 &5468203141577365990
 GameObject:
   m_ObjectHideFlags: 0
@@ -1861,7 +1875,6 @@ GameObject:
   - component: {fileID: 2592133760879900031}
   - component: {fileID: 5769652793316336387}
   - component: {fileID: 7906234576433473136}
-  - component: {fileID: 1193981626994252572}
   m_Layer: 5
   m_Name: MenuCanvas
   m_TagString: Untagged
@@ -1953,19 +1966,6 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
---- !u!114 &1193981626994252572
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8759262707895355643}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9783d51d523be62c592d83ea0b0ea8f0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  tabSystem: {fileID: 0}
 --- !u!1001 &2183949160804913307
 PrefabInstance:
   m_ObjectHideFlags: 0
