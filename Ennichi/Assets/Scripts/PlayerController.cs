@@ -6,14 +6,15 @@ public class PlayerController : MonoBehaviour
 {
 	private float speed = 5;
 	private CharacterController controller;
-	private int points;
-	private TMP_Text pointsText;
+	[SerializeField]
+	private PlayerTab playerTabScript;
+
+	public int points { get; set; }
 
 	// Start is called before the first frame update
 	void Start()
 	{
 		controller = GetComponent<CharacterController>();
-		pointsText = GameObject.FindGameObjectWithTag("UIPoints").GetComponent<TMP_Text>();
 		points = 0;
 		UpdatePointsText();
 	}
@@ -34,6 +35,12 @@ public class PlayerController : MonoBehaviour
 
 		// Move player
 		controller.Move(velocity * Time.deltaTime);
+
+		// test points addition and menu updating
+		if (Input.GetButtonDown("Jump"))
+		{
+			AddPoints(1);
+		}
 	}
 
 	public void AddPoints(int amount)
@@ -42,8 +49,24 @@ public class PlayerController : MonoBehaviour
 		UpdatePointsText();
 	}
 
+	// Called only by the PlayerTab script, on its OnEnable Method
+	public void SetPlayerTab(PlayerTab script)
+	{
+		playerTabScript = script;
+	}
+
+	// Called only by the PlayerTab script, on its OnDisable Method
+	public void UnsetPlayerTab()
+	{
+		playerTabScript = null;
+	}
+
 	private void UpdatePointsText()
 	{
-		pointsText.text = "Points: " + points;
+		// menu is currently active, we want to hot reload it
+		if (playerTabScript)
+		{
+			playerTabScript.UpdatePointsText(points);
+		}
 	}
 }

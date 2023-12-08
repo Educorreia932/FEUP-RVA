@@ -6,6 +6,8 @@ TagManager:
   tags:
   - Hand
   - UIPoints
+  - MenuTabs
+  - MenuButtons
   layers:
   - Default
   - TransparentFX
