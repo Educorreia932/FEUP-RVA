@@ -88,12 +88,22 @@ public class UIManager : MonoBehaviour
     // Register this event from inspector if you want, using the unity event.
     public void EventExample(int selectedTabIndex)
     {
-        // check if a tab is currently active
+        // untoggle current tab
+        if (selectedTabIndex == currentTabIndex)
+        {
+            ToggleTab(currentTabIndex);
+            currentTabIndex = -1;
+            return;
+        }
+
+        // check if another tab is currently active
         if (currentTabIndex != -1)
         {
             // toggle it off
             ToggleTab(currentTabIndex);
         }
+
+        // toggle on new tab
         ToggleTab(selectedTabIndex);
         currentTabIndex = selectedTabIndex;
     }
