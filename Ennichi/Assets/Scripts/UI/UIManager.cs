@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class UIManager : MonoBehaviour
 {
+    public GameObject UICanvas;
     public TabSystem tabSystem;
     private List<GameObject> tabs;
     private int currentTabIndex;
@@ -18,6 +19,12 @@ public class UIManager : MonoBehaviour
         tabSystem.OnTabButtonsClicked.AddListener(TabButtonClick);
         tabs = GetTabs();
         DisableTabs();
+        UICanvas.SetActive(false);
+    }
+
+    public void ToggleUI()
+    {
+        UICanvas.SetActive(!UICanvas.activeSelf);
     }
 
     private List<GameObject> GetTabs()

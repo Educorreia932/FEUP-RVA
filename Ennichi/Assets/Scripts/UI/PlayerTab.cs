@@ -17,7 +17,7 @@ public class PlayerTab : Tab
     {
         playerScript = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>();
         playerScript.SetPlayerTab(this);
-        pointsText = GameObject.FindGameObjectWithTag("UIPoints").GetComponent<TMP_Text>();
+        pointsText = GameObject.FindGameObjectWithTag("PlayerPointsText").GetComponent<TMP_Text>();
         UpdatePointsText(playerScript.points);
     }
 

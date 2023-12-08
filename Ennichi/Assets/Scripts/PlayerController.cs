@@ -6,8 +6,8 @@ public class PlayerController : MonoBehaviour
 {
 	private float speed = 5;
 	private CharacterController controller;
-	[SerializeField]
 	private PlayerTab playerTabScript;
+	private UIManager uiManagerScript;
 
 	public int points { get; set; }
 
@@ -15,6 +15,7 @@ public class PlayerController : MonoBehaviour
 	void Start()
 	{
 		controller = GetComponent<CharacterController>();
+		uiManagerScript = GameObject.FindGameObjectWithTag("MenuManager").GetComponent<UIManager>();
 		points = 0;
 		UpdatePointsText();
 	}
@@ -40,6 +41,11 @@ public class PlayerController : MonoBehaviour
 		if (Input.GetButtonDown("Jump"))
 		{
 			AddPoints(1);
+		}
+
+		if (Input.GetKeyDown(KeyCode.T))
+		{
+			uiManagerScript.ToggleUI();
 		}
 	}
 

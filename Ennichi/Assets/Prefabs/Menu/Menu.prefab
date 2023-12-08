@@ -1060,7 +1060,7 @@ GameObject:
   - component: {fileID: 1791320903729545989}
   m_Layer: 0
   m_Name: Menu
-  m_TagString: Untagged
+  m_TagString: MenuManager
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1094,6 +1094,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9783d51d523be62c592d83ea0b0ea8f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  UICanvas: {fileID: 8759262707895355643}
   tabSystem: {fileID: 0}
 --- !u!1 &5468203141577365990
 GameObject:
@@ -1586,6 +1587,7 @@ GameObject:
   - component: {fileID: 2620409699457138447}
   - component: {fileID: 8489182456347584883}
   - component: {fileID: 2306912547827549877}
+  - component: {fileID: 8734238025429197366}
   m_Layer: 5
   m_Name: Player
   m_TagString: Untagged
@@ -1652,6 +1654,18 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &8734238025429197366
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7682364787394923705}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71b138acb2e1bfb1a8f7bdc012295b28, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8399276534169494085
 GameObject:
   m_ObjectHideFlags: 0
@@ -1665,7 +1679,7 @@ GameObject:
   - component: {fileID: 1628471137502795990}
   m_Layer: 5
   m_Name: PointsText
-  m_TagString: UIPoints
+  m_TagString: PlayerPointsText
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
