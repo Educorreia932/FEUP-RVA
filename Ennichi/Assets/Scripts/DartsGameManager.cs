@@ -9,7 +9,8 @@ public class DartsGameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Instantiate(dartPrefab, spawnPoint);
+        GameObject dart = Instantiate(dartPrefab, spawnPoint);
+        dart.GetComponent<Rigidbody>().velocity = new Vector3(0.0f, 0.0f, 10.0f);
     }
 
     // Update is called once per frame
