@@ -3,18 +3,21 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour {
-	public GameObject ballPrefab; 
+	public GameObject ballPrefab;
 	public Transform ballSpawnPoint;
-	
-	void Start() {
+	public GameObject canvas;
+
+	public void StartGame() {
+		SpawnBall();
+		
+		canvas.SetActive(false);
 	}
 
 	public void SpawnBall() {
-		
+		Instantiate(ballPrefab, ballSpawnPoint);
 	}
 
-	public void SpawnLevel() {
-		
+	public void SpawnCans() {
 	}
 
 	void Update() {
