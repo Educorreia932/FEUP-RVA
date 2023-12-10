@@ -9,6 +9,9 @@ TagManager:
   - MenuButtons
   - MenuManager
   - PlayerPointsText
+  - UIPoints
+  - Right Hand
+  - Left Hand
   layers:
   - Default
   - TransparentFX

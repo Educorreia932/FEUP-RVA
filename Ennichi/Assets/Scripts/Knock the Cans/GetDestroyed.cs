@@ -1,9 +1,22 @@
 using UnityEngine;
 
 public class GetDestroyed : MonoBehaviour {
+	public GameManager gameManager;
+
 	private void OnCollisionEnter(Collision collision) {
-		if (collision.collider.name == "Destroyer") {
-			Destroy(gameObject);
+		switch (collision.collider.tag) {
+			case "Ball":
+				Debug.Log("Collided with ball");
+				gameManager.BallFell();
+				Destroy(collision.collider.gameObject);
+
+				break;
+
+			case "Can":
+				gameManager.CanFell();
+				Destroy(collision.collider.gameObject);
+
+				break;
 		}
 	}
 }
