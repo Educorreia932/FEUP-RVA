@@ -1,16 +1,15 @@
 using UnityEngine;
 
-public class GameManager : MonoBehaviour {
+public class CansGameManager : GameManager {
 	public GameObject ballPrefab;
 	public Transform ballSpawnPoint;
-	public GameObject canvas;
-	public GameObject cans;
+	public GameObject cansSpawnPoint;
 	public GameObject canPyramidPrefab;
 
 	private int numBalls;
 	private int cansFell;
 
-	public void StartGame() {
+	public override void StartGame() {
 		numBalls = 5;
 		cansFell = 0;
 
@@ -20,10 +19,10 @@ public class GameManager : MonoBehaviour {
 		canvas.SetActive(false);
 	}
 
-	private void EndGame() {
+	protected override void EndGame() {
 		canvas.SetActive(true);
 
-		// Reward points
+		AwardPlayer(cansFell * 100);
 	}
 
 	public void SpawnBall() {
@@ -35,29 +34,32 @@ public class GameManager : MonoBehaviour {
 		DestroyCans();
 
 		// Spawn pyramid of cans
-		Instantiate(canPyramidPrefab, cans.transform.position, cans.transform.rotation, cans.transform);
+		Instantiate(
+			canPyramidPrefab,
+			cansSpawnPoint.transform.position,
+			cansSpawnPoint.transform.rotation,
+			cansSpawnPoint.transform
+		);
 	}
 
 	private void DestroyCans() {
-		foreach (Transform child in cans.transform)
+		foreach (Transform child in cansSpawnPoint.transform)
 			Destroy(child.gameObject);
 	}
 
 	public void BallFell() {
 		numBalls--;
 
-		if (numBalls == 0) {
+		if (numBalls == 0)
 			EndGame();
-		}
 
-		else {
+		else
 			SpawnBall();
-		}
 	}
 
 	public void CanFell() {
 		cansFell++;
-		
+
 		// All cans fell
 		if (cansFell == 6)
 			EndGame();
