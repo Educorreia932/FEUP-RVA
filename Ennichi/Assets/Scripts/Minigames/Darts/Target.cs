@@ -3,26 +3,29 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Target : MonoBehaviour {
-	public Transform targetTransform;
 	public Transform targetCenter;
 	public Transform targetEdge;
 
 	public DartsGameManager gameManager;
-	
+
 	private void OnCollisionEnter(Collision collision) {
+		int score = 0;
+
 		if (collision.collider.CompareTag("Dart")) {
-			Destroy(collision.collider.GetComponent<Rigidbody>());
-			collision.collider.transform.eulerAngles = targetTransform.eulerAngles;
+			// Freeze dart
+			collision.collider.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
+			
+			// Lock rotation to be perpendicular to target
+			collision.collider.transform.eulerAngles = transform.eulerAngles;
+
 			float radius = Vector3.Distance(targetCenter.position, targetEdge.position);
 			float hitRadius = Vector3.Distance(targetCenter.position, collision.collider.transform.position);
 			float ratio = hitRadius / radius;
-			if (ratio >= 1.0f) {
-				Debug.Log("Outside");
-			}
-			else {
-				int score = (int) -(10.0f * (ratio - 1.0f));
-				Debug.Log(score);
-			}
+
+			if (ratio < 1.0f)
+				score = (int) -(100.0f * (ratio - 1.0f));
+
+			gameManager.DartHit(score);
 		}
 	}
 }

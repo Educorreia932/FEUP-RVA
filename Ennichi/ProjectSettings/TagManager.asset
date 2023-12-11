@@ -12,6 +12,9 @@ TagManager:
   - UIPoints
   - Right Hand
   - Left Hand
+  - Ball
+  - Can
+  - Dart
   layers:
   - Default
   - TransparentFX

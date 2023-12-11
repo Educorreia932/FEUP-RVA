@@ -12,20 +12,28 @@ public class DartsGameManager : GameManager {
 
 		numDarts = 5;
 		score = 0;
+		
+		canvas.SetActive(false);
 	}
 
 	protected override void EndGame() {
-		canvas.SetActive(true);
-
 		AwardPlayer(score);
+		
+		canvas.SetActive(true);
+	}
+	
+	public void SpawnDart() {
+		Instantiate(dartPrefab, dartSpawnPoint);
 	}
 		
 	public void DartHit(int points) {
 		score += points;
 		numDarts--;
-	}
-	
-	public void SpawnDart() {
-		Instantiate(dartPrefab, dartSpawnPoint);
+		
+		if (numDarts == 0)
+			EndGame();
+
+		else
+			SpawnDart();
 	}
 }

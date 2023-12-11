@@ -24,9 +24,9 @@ public class CansGameManager : GameManager {
 	}
 
 	protected override void EndGame() {
-		canvas.SetActive(true);
-
 		AwardPlayer(cansFell * 100);
+		
+		canvas.SetActive(true);
 	}
 
 	public void SpawnBall() {
