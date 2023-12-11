@@ -8,7 +8,7 @@ public abstract class GameManager : MonoBehaviour {
 	
 	protected abstract void EndGame();
 
-	protected void AwardPlayer(int points) {
-		player.points += points;
+	protected void AwardPlayer(int amount) {
+		player.AddPoints(amount);
 	}
 }

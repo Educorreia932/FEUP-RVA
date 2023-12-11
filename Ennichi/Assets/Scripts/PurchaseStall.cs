@@ -11,6 +11,6 @@ public class PurchaseStall : MonoBehaviour {
 			return;
 
 		Instantiate(item, spawnPoint);
-		player.points -= cost;
+		player.RemovePoints(cost);
 	}
 }
