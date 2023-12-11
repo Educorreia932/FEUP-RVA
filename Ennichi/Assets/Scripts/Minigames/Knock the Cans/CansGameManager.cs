@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 
 public class CansGameManager : GameManager {
@@ -5,6 +6,7 @@ public class CansGameManager : GameManager {
 	public Transform ballSpawnPoint;
 	public GameObject cansSpawnPoint;
 	public GameObject canPyramidPrefab;
+	public TextMeshProUGUI infoText;
 
 	private int numBalls;
 	private int cansFell;
@@ -12,6 +14,8 @@ public class CansGameManager : GameManager {
 	public override void StartGame() {
 		numBalls = 5;
 		cansFell = 0;
+
+		UpdateText();
 
 		SpawnBall();
 		SpawnCans();
@@ -49,6 +53,7 @@ public class CansGameManager : GameManager {
 
 	public void BallFell() {
 		numBalls--;
+		UpdateText();
 
 		if (numBalls == 0)
 			EndGame();
@@ -59,9 +64,15 @@ public class CansGameManager : GameManager {
 
 	public void CanFell() {
 		cansFell++;
+		UpdateText();
 
 		// All cans fell
 		if (cansFell == 6)
 			EndGame();
+		
+	}
+
+	public void UpdateText() {
+		infoText.text = $"Cans fell: {cansFell}\nBalls left: {numBalls}";
 	}
 }
