@@ -26,9 +26,9 @@ Click [here](demo.mp4) to see a demo of the project.
 
 ## How to run 
 
-To run the project from the built [APK file](Builds/) please refer to this [tutorial].  
+To run the project from the built APK file, please refer to this [tutorial].  
 
-Otherwise, open the project in Unity, connect your Oculus Quest 2 and just hit Play.
+Otherwise, open the project in Unity, connect your Oculus Quest 2 and hit Play.
 
 ## Features
 
