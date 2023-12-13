@@ -1,5 +1,7 @@
 using System;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class SkyboxController : MonoBehaviour {
 	private enum DayTime {
@@ -10,8 +12,16 @@ public class SkyboxController : MonoBehaviour {
 	}
 
 	public Material[] skyMaterials;
+	public int overridenSkyMaterial;
+	public TextMeshProUGUI skyboxText;
 
 	void Update() {
+		if (overridenSkyMaterial < 4) {
+			RenderSettings.skybox = skyMaterials[overridenSkyMaterial];
+
+			return;
+		}
+
 		DayTime dayTime = DateTime.Now.Hour switch {
 			< 12 => DayTime.Morning,
 			< 18 => DayTime.Afternoon,
@@ -20,5 +30,17 @@ public class SkyboxController : MonoBehaviour {
 		};
 
 		RenderSettings.skybox = skyMaterials[(int) dayTime];
+	}
+
+	public void SetOverridenSkyMaterial(Slider slider) {
+		overridenSkyMaterial = (int) slider.value;
+
+		skyboxText.text = overridenSkyMaterial switch {
+			0 => "Morning",
+			1 => "Afternoon",
+			2 => "Evening",
+			3 => "Night",
+			_ => "Dynamic"
+		};
 	}
 }
